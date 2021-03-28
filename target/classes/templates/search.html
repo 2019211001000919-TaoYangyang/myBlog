@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: head(~{::title})">
+    <title>搜索结果</title>
+</head>
+<body>
+
+<!--导航-->
+<div th:replace="common :: menu(1)"></div>
+
+<!--中间内容-->
+<div  class="m-container-small m-padded-tb-big animated fadeIn">
+    <div class="ui container">
+        <!--header-->
+        <div class="ui top attached segment">
+            <div class="ui middle aligned two column grid">
+                <div class="column">
+                    <h3 class="ui teal header">搜索结果</h3>
+                </div>
+                <div class="right aligned column">
+                    共<h2 class="ui orange header m-inline-block m-text-thin" th:text="${pageInfo.total}">14</h2>个
+                </div>
+            </div>
+        </div>
+
+        <div class="ui top attached teal segment">
+            <div class="ui padded vertical segment m-padded-tb-large" th:each="blog : ${pageInfo.list}">
+                <div class="ui middle aligned mobile reversed stackable grid">
+                    <div class="eleven wide column">
+                        <h3 class="ui header" ><a href="#" th:href="@{/blog/{id}(id=${blog.id})}" target="_blank" class="m-black" th:text="${blog.title}">你真的理解什么是财富自由吗?</a></h3>
+                        <p class="m-text" th:text="|${blog.description}......|">正确做好任何一件事情的前提是清晰、正确的理解目标。而事实是，我们很多人很多时候根本没有对目标正确的定义，甚至根本从来就没有想过，只是大家都那么做而已…...</p>
+                        <div class="ui grid">
+                            <div class="eleven wide column">
+                                <div class="ui mini horizontal link list">
+                                    <div class="item">
+                                        <img src="https://unsplash.it/100/100?image=1005" th:src="@{${blog.user.avatar}}" alt="" class="ui avatar image">
+                                        <div class="content"><a href="#" class="header" th:text="${blog.user.nickname}" >朱一鸣</a></div>
+                                    </div>
+                                    <div class="item">
+                                        <i class="calendar icon"></i><span th:text="${#dates.format(blog.updateTime, 'yyyy-MM-dd')}">2020-3-02</span>
+                                    </div>
+                                    <div class="item">
+                                        <i class="eye icon"></i> <span th:text="${blog.views}">2342</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right aligned five wide column">
+                                <a href="#" target="_blank" class="ui teal basic label m-padded-tiny m-text-thin" th:text="${blog.type.name}">认知升级</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="five wide column">
+                        <a href="#" th:href="@{/blog/{id}(id=${blog.id})}" target="_blank">
+                            <img src="https://unsplash.it/800/450?image=1005" th:src="@{${blog.firstPicture}}"  alt="" class="ui rounded image" style="width: 200px;height: 120px;">
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--footer-->
+        <div class="ui bottom attached segment animate__animated animate__bounceInUp" style="position: relative">
+            <div style="position: absolute;left: 50%;top: 30%; transform: translateX(-50%);">
+                <p >当前第 <span style="color: red" th:text="${pageInfo.pageNum}"></span> 页，总 <span style="color: red" th:text="${pageInfo.pages}"></span> 页，共 <span style="color: red" th:text="${pageInfo.total}"></span> 条记录</p>
+            </div>
+            <div class="ui middle aligned two column grid">
+                <div class="column" >
+                    <div class="item">
+                        <a th:unless="${pageInfo.hasPreviousPage}" class="ui mini basic button">上一页</a>
+                        <a th:if="${pageInfo.hasPreviousPage}" class="ui mini teal basic button" th:href="@{/(page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+                    </div>
+                </div>
+                <div class="right aligned column" >
+                    <div class="item">
+                        <a th:unless="${pageInfo.hasNextPage}" class="ui mini basic button">下一页</a>
+                        <a th:if="${pageInfo.hasNextPage}" class="ui mini teal basic button" th:href="@{/(page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br>
+<br>
+
+<!--底部-->
+<div th:replace="common :: footer"></div>
+
+<th:block th:replace="common :: js">
+</th:block>
+
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hidden');
+    })
+
+</script>
+
+</body>
+</html>

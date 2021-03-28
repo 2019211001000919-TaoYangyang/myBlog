@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: head(~{::title})">
+    <title>关于我</title>
+</head>
+<body>
+<!--导航-->
+<div th:replace="common :: menu(5)"></div>
+
+
+<!--中间内容-->
+<div class="m-container m-padded-tb-big">
+    <div class="ui container">
+        <div class="ui stackable grid">
+            <div class="eleven wide column">
+                <div class="ui segment">
+                    <img src="../static/images/about.jpg" th:src="@{/images/about.jpg}" class="ui rounded image">
+                </div>
+            </div>
+            <div class="five wide column">
+                <div class="ui top attached segment">
+                    <div class="ui header">关于我</div>
+                </div>
+                <div class="ui attached segment">
+                    <p class="m-text">面向阿里编程...</p>
+                    <p class="m-text">全栈才能生存...</p>
+                </div>
+                <div class="ui attached segment">
+                    <div class="ui orange basic left pointing label m-margin-tb-tiny">编程</div>
+                    <div class="ui orange basic left pointing label m-margin-tb-tiny">动漫</div>
+                    <div class="ui orange basic left pointing label m-margin-tb-tiny">思考</div>
+                    <div class="ui orange basic left pointing label m-margin-tb-tiny">美食</div>
+                    <div class="ui orange basic left pointing label m-margin-tb-tiny">音乐</div>
+                </div>
+                <div class="ui attached segment">
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Java</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Mysql</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">SpringBoot</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Semantic UI</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Vue</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Redis</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">Linux</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">JVM</div>
+                    <div class="ui teal basic left pointing label m-margin-tb-tiny">...</div>
+                </div>
+                <div class="ui bottom attached segment">
+                    <a href="https://github.com/" th:href="@{https://github.com/2019211001000919-TaoYangyang/myBlog}" target="_blank" class="ui circular icon button"><i class="github icon"></i></a>
+                    <a href="https://weixin.qq.com/" th:href="@{https://weixin.qq.com/}" target="_blank" id="weixin" class="ui circular icon button"><i class="weixin icon"></i></a>
+                    <a href="https://user.qzone.qq.com/1732190917" th:href="@{https://user.qzone.qq.com/1732190917}" target="_blank" id="qq" class="ui circular icon button"><i class="qq icon"></i></a>
+                </div>
+
+                <div class="ui weixin-qr flowing popup transition hidden">
+                    <img src="../static/images/me.png" th:src="@{/images/me.png}" alt="" class="ui rounded image" style="width: 100px">
+                </div>
+                <div class="ui qq-qr flowing popup transition hidden">
+                    <img src="../static/images/qq.jpg" th:src="@{/images/qq.jpg}" alt="" class="ui rounded image" style="width: 100px">
+                </div>
+
+                </div>
+        </div>
+    </div>
+</div>
+
+
+
+<br>
+<br>
+<!--底部footer-->
+<div th:replace="common :: footer"></div>
+
+
+<script src="../static/js/jquery-3.5.1.js" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hidden');
+    });
+
+    $('#weixin').popup({
+        popup : $('.weixin-qr'),
+        position : 'bottom center'
+    });
+
+    $('#qq').popup({
+        popup : $('.qq-qr'),
+        position : 'bottom center'
+    });
+
+</script>
+</body>
+</html>

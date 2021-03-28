@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客管理</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="../../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+<!--导航-->
+<div th:replace="admin/common :: menu(1)"></div>
+
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:href="@{/admin/blogs-input}" class="item">发布</a>
+            <a href="#" th:href="@{/admin/blogs}" class="teal active item">列表</a>
+        </div>
+    </div>
+</div>
+
+<!--中间内容-->
+<div class="m-container-small m-padded-tb-big">
+    <div class="ui container">
+        <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+            <i class="close icon"></i>
+            <div class="header">提示：</div>
+            <p th:text="${message}">恭喜，操作成功！</p>
+        </div>
+
+        <div class="ui segment form" >
+            <input type="hidden" name="page">
+            <div class="inline fields">
+
+                <div class="field">
+                    <input type="text" name="title" placeholder="标题">
+                </div>
+
+                <div class="field">
+                    <div class="ui selection dropdown">
+                        <input type="hidden" name="typeId">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">分类</div>
+                        <div class="menu">
+                            <div th:each="type : ${types}" class="item" th:data-value="${type.id}" th:text="${type.name}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="recommend" name="recommend">
+                        <label for="recommend">推荐</label>
+                    </div>
+                </div>
+                <div class="filed">
+                    <button type="button" id="search-btn" class="ui mini teal basic button"><i class="search icon"></i>搜索</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="table-container">
+        <table th:fragment="blogList" class="ui celled table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>标题</th>
+                <th>类型</th>
+                <th>推荐</th>
+                <th>状态</th>
+                <th>更新时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pblog,iterStat : ${pageInfo.list}">
+                <td th:text="${iterStat.count}+${(pageInfo.pageNum)-1}*5">1</td>
+                <td th:text="${pblog.title}">mysql</td>
+                <td th:text="${pblog.type.name}">mysql</td>
+                <td th:text="${pblog.recommend}?'是':'否' ">是</td>
+                <td th:text="${pblog.published} ? '已发布':'草稿'">草稿</td>
+                <td th:text="${pblog.updateTime}">2019-10-02 09:45</td>
+                <td>
+                    <a href="#" th:href="@{/admin/blogs/{id}/update(id=${pblog.id})}" class="ui mini teal basic button">编辑</a>
+                    <a href="#" id="delete" onclick="return confirm('你确定要删除该条博客吗？')" th:href="@{/admin/blogs/{id}/delete(id=${pblog.id})}" class="ui mini red basic button">删除</a>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="7">
+                    <div class="ui pagination menu" th:if="${pageInfo.pages}>1">
+                        <div th:if="${pageInfo.hasPreviousPage}">
+                            <a onclick="page(this)" th:attr="data-page=${pageInfo.prePage}" class="item">上一页</a>
+                        </div>
+                        <div th:if="${pageInfo.hasNextPage}">
+                            <a onclick="page(this)" th:attr="data-page=${pageInfo.nextPage}" class="item">下一页</a>
+                        </div>
+                    </div>
+                    <a href="#" th:href="@{/admin/blogs-input}" class="ui mini right floated teal button ">新增</a>
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+<br>
+<br>
+<!--底部footer-->
+<div th:replace="admin/common :: footer"></div>
+
+
+<script src="../../static/js/jquery-3.5.1.js" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hidden');
+    });
+
+    $('.ui.dropdown').dropdown({
+        on : 'hover'
+    });
+
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade');
+        });
+
+    function page(obj) {
+        $("[name='page']").val($(obj).data("page"));
+        loaddata();
+    }
+
+    $("#search-btn").click(function () {
+        loaddata();
+    })
+
+    function loaddata() {
+        $("#table-container").load(/*[[@{/admin/blogs/search}]]*/"/admin/blogs/search",{
+            title : $("[name='title']").val(),
+            typeId : $("[name='typeId']").val(),
+            recommend : $("[name='recommend']").prop('checked'),
+            page : $("[name='page']").val()
+        });
+    }
+
+</script>
+</body>
+</html>

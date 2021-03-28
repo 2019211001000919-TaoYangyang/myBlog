@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/common :: head(~{::title})">
+    <title>博客管理</title>
+</head>
+<body>
+
+<div th:replace="admin/common :: menu(0)"></div>
+
+<!--中间内容-->
+<div  class="m-container-small m-padded-tb-big">
+    <div class="ui container">
+        <div class="ui success large  message">
+            <!--<h3></h3>-->
+            <h3>今天写点什么好？</h3>
+        </div>
+
+        <img src="https://s1.ax1x.com/2020/05/03/YpdkQS.png" alt="" class="ui rounded bordered fluid image"
+             width="40%" height="40%"
+        >
+    </div>
+</div>
+
+<br>
+<br>
+
+<!--底部footer-->
+<div th:replace="admin/common :: footer"></div>
+
+<script src="../../static/js/jquery-3.5.1.js" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hidden');
+    });
+
+    $('.ui.dropdown').dropdown({
+        on : 'hover'
+    });
+
+</script>
+</body>
+</html>

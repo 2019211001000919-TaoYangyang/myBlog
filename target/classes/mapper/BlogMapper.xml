@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nandu.mapper.BlogMapper">
+
+
+    <!-- 后台展示博客列表-->
+    <select id="findall" parameterType="Map" resultMap="BlogSelect">
+        select b.id, b.title, b.update_time, b.recommend, b.type_id, b.published,
+        t.id typeid, t.name typename
+        from t_blog b, t_type t
+        where b.type_id = t.id
+
+        <if test="map.title != null and map.title != ''">
+            and title = #{map.title}
+        </if>
+        <if test="map.typeId != null and map.typeId != ''">
+            and type_id = #{map.typeId}
+        </if>
+        <if test="map.recommend != null and map.recommend != ''">
+            <choose>
+                <when test="map.recommend">
+                    and recommend = 1
+                </when>
+                <when test="!map.recommend">
+                    and recommend = 0
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 后台修改页面展示博客-->
+    <select id="findbyId" resultMap="BlogSelect">
+        select b.id, b.published, b.flag, b.title, b.content, b.type_id,
+         b.tag_ids, b.first_picture, b.description, b.recommend,
+         b.share_statement, b.appreciation, b.commentabled
+        from t_blog b  where  b.id = #{id};
+    </select>
+
+    <!-- 前端页面展示博客列表-->
+    <select id="findIndexBlog" resultMap="BlogSelect">
+        select b.id, b.title, b.first_picture, b.views, b.update_time, b.description,
+        t.name typename, t.id typeid,
+        u.nickname, u.avatar
+        from t_blog b, t_type t, t_user u
+        where b.type_id = t.id and  u.id = b.user_id and b.published = 1
+        order by b.update_time desc
+    </select>
+
+    <!-- 前端页面展示博客详情-->
+    <select id="findDetailedBlog" resultMap="BlogSelect">  /*博客详情*/
+        select b.id, b.first_picture, b.flag, b.title, b.content, b.views,
+        b.update_time,b.commentabled, b.share_statement, b.appreciation,
+        u.nickname, u.avatar,
+        tag.id tagid, tag.name tagname
+        from t_blog b, t_user u, t_tag tag, t_blog_tags tb
+        where b.user_id = u.id and tb.blogs_id = b.id and tb.tags_id = tag.id and  b.id = #{id}
+    </select>
+
+    <!-- 前端页面全局搜索博客-->
+    <select id="getSearchBlog" resultMap="BlogSelect">
+        <bind name="pattern" value="'%' + query + '%'" />
+        select b.id, b.title, b.first_picture, b.views, b.update_time, b.description,
+        t.name typename,
+        u.nickname, u.avatar
+        from t_blog b, t_type t, t_user u
+        where b.type_id = t.id and  u.id = b.user_id and b.published = 1
+        and (b.title like #{pattern} or b.description like  #{pattern} or t.name like  #{pattern})
+        order by b.update_time desc
+    </select>
+
+    <!-- 根据分类展示博客-->
+    <select id="findByTypeId" resultMap="BlogSelect">
+        select b.id, b.title, b.first_picture, b.views, b.update_time, b.description,
+        t.name typename, t.id typeid,
+        u.nickname, u.avatar
+        from t_blog b, t_type t, t_user u
+        where b.type_id = t.id and u.id = b.user_id and b.type_id = #{typeId} and b.published = 1
+        order by b.update_time desc
+    </select>
+
+    <!-- 根据标签展示博客-->
+    <select id="findByTagId" resultMap="BlogSelect">
+        select b.id, b.title, b.first_picture, b.views, b.update_time, b.description,
+        t.name typename, t.id typeid,
+        t1.name tagname, t1.id tagid,
+        u.nickname, u.avatar
+        from t_blog b, t_type t, t_user u, t_blog_tags tb, t_tag t1
+        where b.type_id = t.id and u.id = b.user_id and tb.blogs_id = b.id and tb.tags_id = t1.id and t1.id = #{tagId} and b.published = 1
+        order by b.update_time desc
+    </select>
+
+    <select id="findGroupYear" resultType="String">
+        select DATE_FORMAT(b.update_time, '%Y') from t_blog b order by b.update_time desc
+    </select>
+
+    <select id="findByYear" resultMap="BlogSelect">
+        select b.title, b.update_time, b.id, b.flag
+        from t_blog b
+        where DATE_FORMAT(b.update_time, "%Y") = #{year}
+    </select>
+
+
+    <insert id="addBlog" parameterType="blog" useGeneratedKeys="true" keyProperty="id">
+    insert into t_blog values(#{blog.id},#{blog.appreciation},#{blog.commentabled},#{blog.content},#{blog.createTime},#{blog.firstPicture},#{blog.flag},
+      #{blog.published},#{blog.recommend},#{blog.shareStatement},#{blog.title},#{blog.updateTime},#{blog.views},#{blog.typeId},#{blog.userId},
+      #{blog.description},#{blog.tagIds});
+    </insert>
+
+    <update id="updateBlog" parameterType="blog">
+      update t_blog set flag=#{blog.flag},title=#{blog.title},content=#{blog.content},first_picture=#{blog.firstPicture},
+      appreciation=#{blog.appreciation},share_statement=#{blog.shareStatement},commentabled=#{blog.commentabled},
+      published=#{blog.published},recommend=#{blog.recommend},update_time=#{blog.updateTime},type_id=#{blog.typeId},
+      description=#{blog.description},tag_ids=#{blog.tagIds}
+      where id=#{blog.id}
+    </update>
+
+    <!-- 结果集-->
+    <resultMap id="BlogSelect" type="Blog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="flag" column="flag"/>
+        <result property="views" column="views"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="typeId" column="type_id"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="shareStatement" column="share_statement" javaType="Boolean"/>
+        <result property="published" column="published"/>
+        <result property="appreciation" column="appreciation" javaType="Boolean"/>
+        <result property="commentabled" column="commentabled" javaType="Boolean"/>
+        <result property="description" column="description"/>
+        <result property="recommend" column="recommend" javaType="Boolean"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="tagIds" column="tag_ids"/>
+        <!--        博客与博客类型是一对一 -->
+        <association property="type" javaType="Type">
+            <id property="id" column="typeid"/>
+            <result property="name" column="typename"/>
+        </association>
+        <association property="user" javaType="User">
+            <id property="id" column="uid"/>
+            <result property="nickname" column="nickname"/>
+            <result property="username" column="username"/>
+            <result property="email" column="email"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <collection property="tags" ofType="Tag">
+            <id property="id" column="tagid"/>
+            <result property="name" column="tagname"/>
+        </collection>
+    </resultMap>
+
+</mapper>
